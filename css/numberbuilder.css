@@ -1,0 +1,89 @@
+* {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-weight: 300;
+}
+body {
+    padding: 25px 10px;
+    background-color: #fcfcfa;
+}
+div.container {
+    display: block;
+    float: left;
+    width: 100%;
+}
+p {
+    font-size: 1em;
+}
+div#block-holder {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+div input#add + label {
+    background-color: green;
+    margin: 0 0 0 -10px;
+}
+div.block {
+    display: inline-block;
+    margin: 0 5px 0 0;
+}
+input[type="text"] {
+    width: 500px;
+    border: solid 1px #456;
+    border-radius: 2px;
+    padding: 6px 2px;
+    font-size: 1.1em;
+    margin: 25px 0;
+    display: block;
+}
+input[type="checkbox"] {
+    display: none;
+}
+label {
+    box-sizing: border-box;
+    display: inline-block;
+    background-color: red;
+    width: 50px;
+    border: solid 1px transparent;
+    border-radius: 2px;
+    height: 45px;
+    font-size: 1.1em;
+    color: #fcfcfa;
+    text-align: center;
+    padding: 10px 0;
+}
+input:checked + label {
+    background-color: green;
+}
+span {
+    background-color: #ddd;
+    border-radius: 2px;
+    border: solid 1px #ddd;
+}
+p {
+    margin: 25px 0;
+    display: block;
+}
+div#footer {
+    display: block;
+    position: absolute;
+    bottom: 0;
+}
+a {
+    color: #7BE;
+    text-decoration: none;
+}
+a:hover {
+    color: green;
+}
+div#imageHolder {
+    display: none;
+}
+img {
+    width: 300px;
+    height: auto;
+    border: solid 1px #456;
+}
+div#imageHolder p, div#imageHolder small {
+    margin: 0;
+}

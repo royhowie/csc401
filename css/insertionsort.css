@@ -1,0 +1,96 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    padding: 25px 10px;
+    background-color: #fcfcfa;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+a {
+    color: #7BE;
+    text-decoration: none;
+}
+a:hover {
+    color: green;
+}
+div#container {
+    width: 100%;
+    display: block;
+    float: left;
+}
+div.block {
+    width: 50%;
+    float: left;
+    margin: 0;
+    padding: 5px;
+    display: inline-block;
+}
+div#display {
+    height: 500px;
+    width: 512px;
+}
+div.bar-holder {
+    height: 500px;
+    width: 50px;
+    padding: 0 5px 0 0;
+    margin: 0;
+    display: inline-block;
+    float: left;
+}
+div.bar {
+    position: relative;
+    background-color: red;
+    width: 100%;
+    padding-top: 5px;
+    text-align: center;
+}
+div.half {
+    width: 50%;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+div.definition {
+    padding: 5px;
+    text-align: center;
+    border-bottom: solid 1px black;
+}
+div.definition > * {
+    display: inline-block;
+}
+div#code {
+    background-color: #ddd;
+    border-radius: 4px;
+    padding: 2px 0 10px 15px;
+}
+div#code > p {
+    margin: 5px;
+    padding: 0;
+    border-radius: 2px;
+}
+div#code > p.indent1 {
+    margin-left: 30px;
+}
+div#code > p.indent2 {
+    margin-left: 60px;
+}
+.highlight {
+    background-color: yellow;
+}
+button {
+    background-color: #7BE;
+    border: solid 1px #7BE;
+    border-radius: 4px;
+    height: 30px;
+    width: 100px;
+    margin: 10px 0 0 5px;
+    font-size: 1.1em;
+}
+button:hover {
+    background-color: #fcfcfa;
+    cursor: pointer;
+}
+#footer {
+    position: fixed;
+    bottom: 0;
+}
