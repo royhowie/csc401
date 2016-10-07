@@ -1,0 +1,322 @@
+<html>
+<head>
+    <title>double hash map</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            padding: 25px 10px;
+            background-color: #fcfcfa;
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+        a {
+            color: #7BE;
+            text-decoration: none;
+        }
+        a:hover {
+            color: green;
+        }
+        p.function {
+            padding: 2px;
+            border-radius: 2px;
+            background-color: #ddd;
+            width: 365px;
+        }
+        div#container {
+            width: 100%;
+            display: block;
+            float: left;
+        }
+        div.slot input.open {
+            background-color: #9BDD87;
+            /* light green http://www.colorpicker.com/9bdd87 */
+        }
+        div.slot input.closed {
+            background-color: red;
+        }
+        div.slot input.indeterminate {
+            background-color: yellow;
+        }
+        div#hashmap {
+            border-radius: 2px;
+            height: 75px;
+            width: 1000px;
+        }
+        div.slot {
+            border: solid 1px #7be;
+            height: 77px;
+            width: 52px;
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+        div.slot:not(:nth-of-type(1)) {
+            border-left: none;
+        }
+        div.slot input.slot-value {
+            border: solid 1px transparent;
+
+            border-bottom: solid 1px #7be;      /* must come after `border` declaration */
+
+            font-size: 1.5em;
+            height: 50px;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            width: 50px;
+        }
+        div.slot input.slot-index {
+            border: none;
+            height: 25px;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            width: 50px;
+        }
+        div.button-holder {
+            display: inline-block;
+            margin: 10px 0 0 0;
+        }
+        div.button-holder input {
+            border-radius: 2px;
+            border: solid 1px #456;
+            display: inline-block;
+            font-size: 1.2em;
+            height: 32px;
+            margin: 0;
+            padding: 6px 4px;
+            width: 150px;
+        }
+        div.button-holder button {
+            background-color: #7BE;
+            border-radius: 4px;
+            border: solid 1px #7BE;
+            font-size: 1.1em;
+            height: 33px;
+            padding: 0;
+            width: 100px;
+        }
+        div.button-holder button:hover {
+            background-color: #fcfcfa;
+            cursor: pointer;
+        }
+        #footer {
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Double Hash Map</h1>
+    <p class="function">
+        hash (value) -> value mod 16
+    </p>
+    <p class="function">
+        jump (value) -> 1 + 2 * (value mod 4)
+    <p>
+    <div id="container">
+        <div id="hashmap">
+        </div>
+        <p id="message">
+        </p>
+        <div id="action-buttons">
+            <div class="button-holder">
+                <input name="add" type="text" placeholder="add">
+                <button id="add">add</button>
+            <div class="button-holder">
+                <input name="remove" type="text" placeholder="remove">
+                <button id="remove">remove</button>
+            </div>
+            <div class="button-holder">
+                <button id="clear">clear</button>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <p>
+            <small>by</small>
+            <a href="http://royhowie.com">Roy Howie</a>
+            <small>4/23/15</small>
+            <small><a href="index.html">home</a></small>
+        </p>
+    </div>
+</body>
+<script>
+var hash = {
+    arr: [],
+    items: 0,
+    maxLength: 16,
+    get: function (index) {
+        return this.arr[index];
+    },
+    getIndex: function (value) {
+        return this.arr.indexOf(value);
+    },
+    hash: function (n) {
+        return n % 16;
+    },
+    isFull: function () {
+        return this.items >= this.maxLength;
+    },
+    jump: function (n) {
+        return 1 + ((n % 4) << 1);
+    },
+    set: function (index, value) {
+        this.arr[index] = value;
+    }
+}
+var messages = {
+    isFull: function () {
+        return "the table is full! To add a value, clear the table or remove something.";
+    },
+    foundRemoveItemAtSlot: function (index, value) {
+        return "found value=" + value + " at slot=" + index + "; removing";
+    },
+    slotIsClosed: function (index, jump) {
+        return "slot " + index + " is filled; jumping forward " + jump + " slots";
+    },
+    slotIsOpen: function (index) {
+        return "slot " + index + " is open; inserting there";
+    },
+    tableCleared: function () {
+        return "table cleared";
+    },
+    valueNotFoundAtSlot: function (index, value, jump) {
+        return "value=" + value + " not found at index=" + index + "; jumping forward " + jump + " slots";
+    },
+    valueNotInTable: function (value) {
+        return "value=" + value + " is not in the table (animation skipped)";
+    }
+}
+var general = {
+    add: function () {
+        var input = document.getElementById("action-buttons").getElementsByTagName("input")[0];
+        general.animateAdd(parseInt(input.value) || 0);
+        document.getElementById("action-buttons").getElementsByTagName("button")[0].disabled = true;
+    },
+    animateAdd: function (value) {
+        var h = hash.hash(value), j = hash.jump(value);
+
+        if (hash.isFull()) {
+            general.setMessage(messages.isFull());
+            document.getElementById("action-buttons").getElementsByTagName("input")[0].disabled = true;
+        } else {
+            for (var i = h, c = 0; ; i = (i + j) % hash.maxLength, c++) {
+                if (hash.get(i) != null) {
+                    general.jumpForward(i, j, messages.slotIsClosed(i, j), c * 750);
+                } else {
+                    general.lastJump(i, value, messages.slotIsOpen(i), c * 750);
+                    break;
+                }
+            }
+            hash.items += 1;
+        }
+    },
+    animateRemove: function (value) {
+        var h = hash.hash(value), j = hash.jump(value);
+        if (hash.getIndex(value) === -1) {
+            general.setMessage(messages.valueNotInTable(value));
+            for (var i = 0; i < 16; i++) {
+                general.colorBox(i, "closed");
+            }
+        } else {
+            for (var i = h, c = 1; ; i = (i + j) % hash.maxLength, c++) {
+                if (hash.get(i) !== value) {
+                    general.jumpForward(i, j, messages.valueNotFoundAtSlot(i, value, j), c * 750);
+                } else {
+                    general.lastJump(i, null, messages.foundRemoveItemAtSlot(i, value), c * 750);
+                    break;
+                }
+            }
+            hash.items -= 1;
+        }
+    },
+    clear: function (msg) {
+        document.getElementById("action-buttons").getElementsByTagName("input")[0].disabled = false;
+        hash.items = 0;
+        for (var i = 0; i < 16; i++) {
+            general.colorBox(i, "indeterminate");
+            general.updateSlot(i, null);
+            general.setMessage(msg || messages.tableCleared());
+        }
+    },
+    colorBox: function (index, className) {
+        var i = document.getElementById(index).getElementsByTagName("input");
+
+        i[0].classList.add(className);
+        i[1].classList.add(className);
+
+        setTimeout(function () {
+            i[0].classList.remove(className);
+            i[1].classList.remove(className);
+        }, 1000);
+    },
+    init: function () {
+        for (var i = 0; i < 16; i++) {
+            general.makeSlot(i, null);
+        }
+        general.clear("table initialized");
+    },
+    jumpForward: function (index, jump, msg, time) {
+        setTimeout(function () {
+            general.setMessage(msg);
+            general.colorBox(index, "closed");
+        }, time);
+    },
+    lastJump: function (index, value, msg, time) {
+        setTimeout(function () {
+            general.setMessage(msg);
+            general.colorBox(index, "open");
+            general.updateSlot(index, value);
+
+            document.getElementById("action-buttons").getElementsByTagName("button")[0].disabled = false;
+        }, time);
+    },
+    makeSlot: function (index, value) {
+        var container = document.getElementById("hashmap"),
+            holder = document.createElement("div"),
+            indexSlot = document.createElement("input"),
+            valueSlot = document.createElement("input");
+
+        valueSlot.classList.add("slot-value");
+        valueSlot.disabled = true;
+        valueSlot.value = value || "-";
+        
+        indexSlot.classList.add("slot-index");
+        indexSlot.disabled = true;
+        indexSlot.value = index;
+
+        holder.appendChild(valueSlot);
+        holder.appendChild(indexSlot);
+
+        holder.setAttribute("id", index);
+        holder.classList.add("slot");
+
+        container.appendChild(holder);
+    },
+    remove: function () {
+        var inputs = document.getElementById("action-buttons").getElementsByTagName("input");
+        inputs[0].disabled = false;
+        general.animateRemove(parseInt(inputs[1].value));
+    },
+    setMessage: function (msg) {
+        document.getElementById("message").innerHTML = "<strong>message: </strong>" + msg;
+    },
+    updateSlot: function (index, value) {
+        var slots = document.getElementById(index).getElementsByTagName("input");
+
+        hash.set(index, value);
+
+        slots[0].value = typeof value === "number" ? value : "-";
+        slots[1].value = index;
+    }
+}
+
+document.getElementById("add").onclick = general.add;
+document.getElementById("clear").onclick = general.clear;
+document.getElementById("remove").onclick = general.remove;
+
+general.init();
+</script>
+</html>

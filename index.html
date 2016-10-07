@@ -1,0 +1,80 @@
+<html>
+<head>
+	<title>royhowie</title>
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style>
+		* {
+			font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+			font-weight: 300;
+		}
+		html {
+			background-color: #fcfcfa;
+			color: #333;
+			width: 100%;
+		}
+		svg {
+			height: 100%;
+			margin-left: -9px;
+			margin-top: -9px;
+			overflow: hidden;
+			position: absolute;
+			z-index: -1;
+		}
+		div#main {
+			background-color: #fcfcfa;
+			border-radius: 2px;
+			border: solid #4682b4 1px;
+			left: 0;
+			margin: auto;
+			opacity: 0.95;
+			padding: 0 15px;
+			position: absolute;
+			right: 0;
+			top: 60px;
+			width: 600px;
+			z-index: 2;
+		}
+		a {
+			color: #4682b4;
+			text-decoration: none;
+		}
+		a:hover {
+			color: #7BE;
+			color: green;
+		}
+		div#footer {
+			box-sizing: border-box;
+			display: block;
+			position: absolute;
+			bottom: 0;
+			/*left: 0;
+			right: 0;*/
+			/*width: 100%;*/
+			opacity: 0.95;
+			padding: 0 10px;
+			/*margin: 0 -10px;*/
+			background-color: #fcfcfa;
+			/*border-radius: 2px;
+			border: solid #4682b4 1px;*/
+		}
+	</style>
+</head>
+<body>
+	<div id="main">
+		<p>
+			csc401 practicum projects for csc317 by
+			<a href="http://royhowie.com">Roy Howie</a>
+		</p>
+		<p><a href="greetings.html">greetings builder</a></p>
+		<p><a href="numberbuilder.html">number builder</a></p>
+		<p><a href="insertionsort.html">insertion sort</a></p>
+	</div>
+	<div id="footer">
+		<p>
+			<small>the background is a random, perfectly acyclical maze generated through recursive backtracking</small>
+		</p>
+	</div>
+</body>
+<script src="maze.js"></script>
+</html>

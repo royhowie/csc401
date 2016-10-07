@@ -1,0 +1,289 @@
+<html>
+<head>
+    <title>insertion sort</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            padding: 25px 10px;
+            background-color: #fcfcfa;
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+        a {
+            color: #7BE;
+            text-decoration: none;
+        }
+        a:hover {
+            color: green;
+        }
+        div#container {
+            width: 100%;
+            display: block;
+            float: left;
+        }
+        div.block {
+            width: 50%;
+            float: left;
+            margin: 0;
+            padding: 5px;
+            display: inline-block;
+        }
+        div#display {
+            height: 500px;
+            width: 512px;
+        }
+        div.bar-holder {
+            height: 500px;
+            width: 50px;
+            padding: 0 5px 0 0;
+            margin: 0;
+            display: inline-block;
+            float: left;
+        }
+        div.bar {
+            position: relative;
+            background-color: red;
+            width: 100%;
+            padding-top: 5px;
+            text-align: center;
+        }
+        div.half {
+            /*float: left;*/
+            width: 50%;
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+        }
+        div.definition {
+            padding: 5px;
+            text-align: center;
+            border-bottom: solid 1px black;
+        }
+        div.definition > * {
+            display: inline-block;
+        }
+        div#code {
+            background-color: #ddd;
+            border-radius: 4px;
+            padding: 2px 0 10px 15px;
+        }
+        div#code > p {
+            margin: 5px;
+            padding: 0;
+            border-radius: 2px;
+        }
+        div#code > p.indent1 {
+            margin-left: 30px;
+        }
+        div#code > p.indent2 {
+            margin-left: 60px;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        button {
+            background-color: #7BE;
+            border: solid 1px #7BE;
+            border-radius: 4px;
+            height: 30px;
+            width: 100px;
+            margin: 10px 0 0 5px;
+            font-size: 1.1em;
+        }
+        button:hover {
+            background-color: #fcfcfa;
+            cursor: pointer;
+        }
+        #footer {
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Insertion Sort</h1>
+    <div id="container">
+        <div class="block" id="display">
+            <div class="bar-holder">
+                <div class="bar"></div>
+            </div>
+            <div class="bar-holder">
+                <div class="bar"></div>
+            </div>
+            <div class="bar-holder">
+                <div class="bar"></div>
+            </div>
+        </div>
+        <div class="block">
+            <div class="half">
+                <div id="code">
+                    <p class="">for j = 2 to A.length:</p>
+                    <p class="indent1">i = j - 1</p>
+                    <p class="indent1">while i > 0 and A[i] > A[j]:</p>
+                    <p class="indent2">swap A[i] and A[i + 1]</p>
+                    <p class="indent2">i = i - 1</p>
+                </div>
+            </div>
+            <div class="half">
+                <div class="definition">L : 10</div>
+                <div class="definition">j : <div id="j">2</div></div>
+                <div class="definition">i : <div id="i">0</div></div>
+            </div>
+            <div class="half">
+                <button id="next">next</button>
+                <button id="auto">auto</button>
+                <button id="reset">reset</button>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <p>
+            <small>by</small>
+            <a href="http://royhowie.com">Roy Howie</a>
+            <small>3/22/15</small>
+            <small><a href="index.html">home</a></small>
+        </p>
+    </div>
+</body>
+<script>
+    var interval, stack;
+
+    var shuffle = function (arr) {
+        var currentIndex = arr.length;
+        while (0 < currentIndex) {
+            var randomIndex = (Math.random() * currentIndex) | 0;
+            currentIndex -= 1;
+            var temp = arr[currentIndex];
+            arr[currentIndex] = arr[randomIndex];
+            arr[randomIndex] = temp;
+        }
+        return arr;
+    }
+    var init = function (arr) {
+        var node = document.getElementById("display");
+        while (node.firstChild) {
+            node.removeChild(node.firstChild);
+        }
+        clearInterval(interval);
+        document.getElementById("next").disabled = false;
+        updateTag("j", 2);
+        updateTag("i", 1);
+        var a = shuffle(arr);
+        a.forEach(appendBlock);
+        stack = generateStack(a);
+        return a;
+    }
+    var appendBlock = function (n) {
+        var height = n * 50;
+
+        var outerDiv = document.createElement("div"),
+            innerDiv = document.createElement("div"),
+            text = document.createTextNode(n);
+
+        outerDiv.style.height = "500px";
+        outerDiv.className = "bar-holder";
+        innerDiv.className = "bar";
+
+        innerDiv.style.height = height + "px";
+        outerDiv.style.margin.top = (500 - height) + "px";
+
+        innerDiv.appendChild(text);
+        outerDiv.appendChild(innerDiv);
+
+        document.getElementById("display").appendChild(outerDiv);
+    }
+    var updateTag = function (label, value) {
+        document.getElementById(label).innerHTML = value;
+    }
+    var instructionMapping = {
+        color: function (n, color) {
+            var node = document.getElementById("display").getElementsByClassName("bar-holder")[n];
+            node.firstChild.style.backgroundColor = color;
+        },
+        decrement: function (label) {
+            instructionMapping.highlight(4);
+            var node = document.getElementById(label),
+                value = parseInt(node.innerHTML);
+            node.innerHTML = value - 1;
+        },
+        highlight: function (n) {
+            var nodes = document.getElementsByClassName("highlight");
+            for (var i = 0; i < nodes.length; i++) {
+                nodes[i].classList.remove("highlight");
+            }
+            document.getElementById("code").getElementsByTagName("p")[n].classList.add("highlight");
+        },
+        increment: function (label) {
+            instructionMapping.highlight(0);
+            var node = document.getElementById(label);
+            node.innerHTML = parseInt(node.innerHTML) + 1;
+        },
+        set: function (label, value) {
+            document.getElementById(label).innerHTML = value;
+        },
+        swap: function (n) {
+            instructionMapping.highlight(3);
+            var parent = document.getElementById("display"),
+                children = parent.getElementsByClassName("bar-holder");
+            parent.insertBefore(children[n + 1], children[n]);
+        }
+    }
+    var next = function () {
+        var instruction = stack.shift();
+        if (instruction) {
+            instructionMapping[instruction[0]](instruction[1], instruction[2]);
+        } else {
+            document.getElementById("next").disabled = true;
+            alert("array is sorted!");
+        }
+    }
+    var generateStack = function (arr) {
+        var stack = [];
+        stack.push([ "color", 0, "green" ]);
+        stack.push([ "highlight", 0 ]);
+        for (var j = 1; j < arr.length; j++) {
+            stack.push([ "color", j, "blue" ]);
+            stack.push([ "highlight", 1 ]);
+            var i = j - 1;
+            stack.push([ "set", "i", i ]);
+            stack.push([ "highlight", 2 ]);
+            var madeSwap = false;
+            while (i > -1 && arr[i] > arr[i+1]) {
+                madeSwap = true;
+                var temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                stack.push(["swap", i]);
+                i = i - 1;
+                stack.push(["decrement", "i"]);
+            }
+            stack.push([ "color", madeSwap ? i + 1 : j, "green" ]);
+            stack.push([ "increment", "j"]);
+        }
+        return stack;
+    }
+    var auto = function () {
+        if (stack.length) {
+            interval = setInterval(function () {
+                if (stack.length < 1) {
+                    clearInterval(interval);
+                } else {
+                    next();
+                }
+            }, 150);
+        } else {
+            document.getElementById("reset").click();
+        }
+    }
+
+    var n = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var shuffledArray = init(n);
+
+    document.getElementById("reset").onclick = function () {
+        shuffledArray = init(n);
+    }
+    document.getElementById("next").onclick = next;
+    document.getElementById("auto").onclick = auto;
+</script>
+</html>
